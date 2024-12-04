@@ -102,6 +102,32 @@
     )
 )
 
+(deftemplate lymph_node_hypertrophy_frequency
+    0 5
+    ( (rare (0 1) (2 0))
+      (occasional (1 0) (3 1) (4 0))
+      (frequent (3 0) (5 1) (5 1))
+    )
+)
+
+(deftemplate hemorrhagic_dyscrasia_frequency
+    0 5
+    ( (none (0 1) (1 0))
+      (rare (1 1) (3 0))
+      (occasional (2 0) (3 1) (4 0))
+      (frequent (3 0) (5 1) (5 1))
+    )
+)
+
+(deftemplate neuro_impairment_intensity
+    0 5
+    ( (none (0 1) (1 0))
+      (mild (1 1) (3 0))
+      (moderate (2 0) (3 1) (4 0))
+      (severe (3 0) (5 1) (5 1))
+    )
+)
+
 ; ------- DEFINE DISEASE TEMPLATES -------
 
 (deftemplate zika
@@ -156,6 +182,9 @@
     (or (itch_intensity severe)
         (itch_intensity moderate)
     )
+    (lymph_node_hypertrophy_frequency frequent)
+    (hemorrhagic_dyscrasia_frequency none)
+    (neuro_impairment_intensity mild)
 
     (rash_appearance early)
     (conjunctival_hyperemia yes)
@@ -174,6 +203,9 @@
     (headache_frequency frequent)
     (headache_intensity severe)
     (itch_intensity mild)
+    (lymph_node_hypertrophy_frequency rare)
+    (hemorrhagic_dyscrasia_frequency occasional)
+    (neuro_impairment_intensity none)
 
     (rash_appearance late)
     (conjunctival_hyperemia no)
@@ -193,6 +225,9 @@
     (headache_frequency occasional)
     (headache_intensity moderate)
     (itch_intensity mild)
+    (lymph_node_hypertrophy_frequency occasional)
+    (hemorrhagic_dyscrasia_frequency rare)
+    (neuro_impairment_intensity none)
 
     (rash_appearance middle)
     (conjunctival_hyperemia no)
@@ -214,6 +249,10 @@
   (headache_intensity (3 0) (3 1) (3 0))
   (headache_frequency (3 0) (3 1) (3 0))
   (itch_intensity (5 0) (5 0) (5 1))
+
+  (lymph_node_hypertrophy_frequency (5 0) (5 0) (5 1))
+  (hemorrhagic_dyscrasia_frequency (0 1) (0 0) (0 0) (0 0))
+  (neuro_impairment_intensity (1 0) (1 1) (1 0) (1 0))
 
   (rash_appearance (1 1) (1 0) (1 0))
   (conjunctival_hyperemia (1 0) (1 1))
