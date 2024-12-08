@@ -55,13 +55,13 @@
     )
 )
 
-(deftemplate joint_edema_frequency
-    0 5
-    ( (rare (0 1) (2 0))
-      (occasional (1 0) (3 1) (4 0))
-      (frequent (3 0) (5 1) (5 1))
-    )
-)
+;(deftemplate joint_edema_frequency
+;    0 5
+;    ( (rare (0 1) (2 0))
+;      (occasional (1 0) (3 1) (4 0))
+;      (frequent (3 0) (5 1) (5 1))
+;    )
+;)
 
 (deftemplate retro_orbital_pain_frequency
     0 5
@@ -86,13 +86,13 @@
     )
 )
 
-(deftemplate headache_frequency
-    0 5
-    ( (rare (0 1) (2 0))
-      (occasional (1 0) (3 1) (4 0))
-      (frequent (3 0) (5 1) (5 1))
-    )
-)
+;(deftemplate headache_frequency
+;    0 5
+;    ( (rare (0 1) (2 0))
+;      (occasional (1 0) (3 1) (4 0))
+;      (frequent (3 0) (5 1) (5 1))
+;    )
+;)
 
 (deftemplate itch_intensity
     0 5
@@ -174,10 +174,10 @@
     (myalgia_frequency occasional)
     (arthralgia_frequency rare)
     (arthralgia_intensity moderate)
-    (joint_edema_frequency occasional)
+    ;(joint_edema_frequency occasional)
     (joint_edema_intensity mild)
     (retro_orbital_pain_frequency rare)
-    (headache_frequency occasional)
+    ;(headache_frequency occasional)
     (headache_intensity moderate)
     (or (itch_intensity severe)
         (itch_intensity moderate)
@@ -198,9 +198,9 @@
     (myalgia_frequency rare)
     (arthralgia_frequency rare)
     (arthralgia_intensity mild)
-    (joint_edema_frequency rare)
+    ;(joint_edema_frequency rare)
     (retro_orbital_pain_frequency frequent)
-    (headache_frequency frequent)
+    ;(headache_frequency frequent)
     (headache_intensity severe)
     (itch_intensity mild)
     (lymph_node_hypertrophy_frequency rare)
@@ -219,10 +219,10 @@
     (myalgia_frequency frequent)
     (arthralgia_frequency frequent)
     (arthralgia_intensity severe)
-    (joint_edema_frequency frequent)
+    ;(joint_edema_frequency frequent)
     (joint_edema_intensity severe)
     (retro_orbial_pain_frequency rare)
-    (headache_frequency occasional)
+    ;(headache_frequency occasional)
     (headache_intensity moderate)
     (itch_intensity mild)
     (lymph_node_hypertrophy_frequency occasional)
@@ -237,23 +237,23 @@
 
 ; ----------- INSERT FACTS --------------
 
-(deffacts zika_trial
-  (fever_temperature (98 1) (98 0) (98 0))
-  (fever_duration (0 1) (0 0) (0 0))
-  (myalgia_frequency (3 0) (3 1) (3 0))
-  (arthralgia_frequency (0 1) (0 0) (0 0))
-  (arthralgia_intensity (3 0) (3 1) (3 0))
-  (joint_edema_frequency (3 0) (3 1) (3 0))
-  (joint_edema_intensity (0 1) (0 0) (0 0))
-  (retro_orbital_pain_frequency (0 1) (0 0) (0 0))
-  (headache_intensity (3 0) (3 1) (3 0))
-  (headache_frequency (3 0) (3 1) (3 0))
-  (itch_intensity (5 0) (5 0) (5 1))
-
-  (lymph_node_hypertrophy_frequency (5 0) (5 0) (5 1))
-  (hemorrhagic_dyscrasia_frequency (0 1) (0 0) (0 0) (0 0))
-  (neuro_impairment_intensity (1 0) (1 1) (1 0) (1 0))
-
-  (rash_appearance (1 1) (1 0) (1 0))
-  (conjunctival_hyperemia (1 0) (1 1))
-)
+;(deffacts zika_trial
+;  (fever_temperature (98 1) (98 0) (98 0))
+;  (fever_duration (0 1) (0 0) (0 0))
+;  (myalgia_frequency (3 0) (3 1) (3 0))
+;  (arthralgia_frequency (0 1) (0 0) (0 0))
+;  (arthralgia_intensity (3 0) (3 1) (3 0))
+;  ;(joint_edema_frequency (3 0) (3 1) (3 0))
+;  (joint_edema_intensity (0 1) (0 0) (0 0))
+;  (retro_orbital_pain_frequency (0 1) (0 0) (0 0))
+;  (headache_intensity (3 0) (3 1) (3 0))
+;  ;(headache_frequency (3 0) (3 1) (3 0))
+;  (itch_intensity (5 0) (5 0) (5 1))
+;
+;  (lymph_node_hypertrophy_frequency (5 0) (5 0) (5 1))
+;  (hemorrhagic_dyscrasia_frequency (0 1) (0 0) (0 0) (0 0))
+;  (neuro_impairment_intensity (1 0) (1 1) (1 0) (1 0))
+;
+;  (rash_appearance (1 1) (1 0) (1 0))
+;  (conjunctival_hyperemia (1 0) (1 1))
+;)
