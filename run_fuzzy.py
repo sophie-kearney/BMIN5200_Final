@@ -10,13 +10,13 @@ all_output = {}
 
 for _, row in data.iterrows():
     # start fuzzy clips
-    process = subprocess.Popen(
-        ["/Users/sophiekk/PycharmProjects/FuzzyCLIPS/source/fz_clips"],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True
-    )
+    # process = subprocess.Popen(
+    #     ["/Users/sophiekk/PycharmProjects/FuzzyCLIPS/source/fz_clips"],
+    #     stdin=subprocess.PIPE,
+    #     stdout=subprocess.PIPE,
+    #     stderr=subprocess.PIPE,
+    #     text=True
+    # )
 
     facts_string = f"(deffacts trial"
     row_dict = row.to_dict()
@@ -42,31 +42,33 @@ for _, row in data.iterrows():
 
     facts_string += "\n  (rash_appearance "
     row_dict['rash_appearance'] = int(row_dict['rash_appearance'])
-    if row_dict['rash_appearance'] < 3:
-        facts_string += f"({row_dict['rash_appearance']} 1) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0))"
+    if row_dict['rash_appearance'] < 2:
+        facts_string += f"({row_dict['rash_appearance']} 1) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0))"
+    elif row_dict['rash_appearance'] < 3:
+        facts_string += f"({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 1) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0))"
     elif row_dict['rash_appearance'] < 5:
-        facts_string += f"({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 1) ({row_dict['rash_appearance']} 0))"
+        facts_string += f"({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 1) ({row_dict['rash_appearance']} 0))"
     else:
-        facts_string += f"({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 1))"
+        facts_string += f"({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 0) ({row_dict['rash_appearance']} 1))"
     features_left.remove("rash_appearance")
 
     for slot in features_left:
         row_dict[slot] = int(row_dict[slot])
         facts_string += f"\n  ({slot} "
-        if slot == "neuro_impairment_intensity" or slot == "hemorrhagic_dyscrasia_frequency":
-            if row_dict[slot] < 1:
-                facts_string += f"({row_dict[slot]} 1) ({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 0))"
-            elif row_dict[slot] < 3:
-                facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 1) ({row_dict[slot]} 0) ({row_dict[slot]} 0))"
-            elif row_dict[slot] < 4:
-                facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 1) ({row_dict[slot]} 0))"
-            else:
-                facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 1))"
-            continue
+        # if slot == "neuro_impairment_intensity" or slot == "hemorrhagic_dyscrasia_frequency":
+        #     if row_dict[slot] < 1:
+        #         facts_string += f"({row_dict[slot]} 1) ({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 0))"
+        #     elif row_dict[slot] < 3:
+        #         facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 1) ({row_dict[slot]} 0) ({row_dict[slot]} 0))"
+        #     elif row_dict[slot] < 4:
+        #         facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 1) ({row_dict[slot]} 0))"
+        #     else:
+        #         facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 1))"
+        #     continue
 
         if row_dict[slot] < 2:
             facts_string += f"({row_dict[slot]} 1) ({row_dict[slot]} 0) ({row_dict[slot]} 0))"
-        elif row_dict[slot] < 4:
+        elif row_dict[slot] < 5:
             facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 1) ({row_dict[slot]} 0))"
         else:
             facts_string += f"({row_dict[slot]} 0) ({row_dict[slot]} 0) ({row_dict[slot]} 1))"
@@ -74,10 +76,11 @@ for _, row in data.iterrows():
     facts_string += "\n)"
     all_commands[_] = facts_string
 
-    command = """(load "/Users/sophiekk/PycharmProjects/BMIN5200_Final/DCZ.clp")\n""" + facts_string + """\n(reset)\n(run)\n(facts)\n(exit)"""
-    stdout, stderr = process.communicate(command)
+    command = """(load "/Users/sophiekk/PycharmProjects/BMIN5200_Final/test.clp")\n""" + facts_string + """\n(reset)\n(run)\n(facts)\n(exit)"""
+    print(command)
+    # stdout, stderr = process.communicate(command)
+    # print(stdout)
 
-    result_fact = next((line for line in stdout.splitlines() if "f-15" in line), None)
-    all_output[_] = result_fact
-
-print(all_output)
+    # result_fact = next((line for line in stdout.splitlines() if "f-15" in line), None)
+    # all_output[_] = stdout
+# print(all_output)
