@@ -5,7 +5,6 @@ from tabnanny import check
 
 import clips, os
 from src.clips_util import print_facts, print_rules, print_templates, build_read_assert
-import pandas as pd
 import logging
 from tabulate import tabulate
 
