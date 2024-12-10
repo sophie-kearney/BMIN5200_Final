@@ -117,7 +117,6 @@ for _, row in df.iterrows():
     command = f"""(load "{os.getcwd()}/fuzzyES.clp")\n""" + facts_string + """\n(reset)\n(run)\n(facts)\n(exit)"""
 
     stdout, stderr = process.communicate(command)
-    # print(stdout)
 
     result_fact = next((line for line in stdout.splitlines() if "f-11" in line), None)
     if result_fact:
@@ -126,5 +125,19 @@ for _, row in df.iterrows():
         split_res = result_fact.split(" ")
         print(f"\nDisease: {split_res[0]}")
         print(f"CF: {split_res[-1]}")
+
+        if next((line for line in stdout.splitlines() if "f-12" in line), None):
+            result_fact = result_fact.replace("f-12    (", "")
+            result_fact = result_fact.strip()
+            split_res = result_fact.split(" ")
+            print(f"\nDisease: {split_res[0]}")
+            print(f"CF: {split_res[-1]}")
+
+            if next((line for line in stdout.splitlines() if "f-13" in line), None):
+                result_fact = result_fact.replace("f-13    (", "")
+                result_fact = result_fact.strip()
+                split_res = result_fact.split(" ")
+                print(f"\nDisease: {split_res[0]}")
+                print(f"CF: {split_res[-1]}")
     else:
         print("Unknown")

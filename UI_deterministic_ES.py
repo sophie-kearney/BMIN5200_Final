@@ -31,10 +31,6 @@ def invalid_user_input(val, min, max):
 # TEMPLATES
 ###
 
-
-# ; remove
-# arthralgia frequency, conjunctival_hyperemia, headache frequency, hemorrhagic_dyscrasia, neuro_impairment joint edema frequency
-
 template_symptoms = """(deftemplate symptoms
                            (slot temperature (type SYMBOL)
                                 (allowed-symbols unknown no yes))
@@ -85,9 +81,7 @@ template_retro_orbital_pain = """(deftemplate retro_orbital_pain
                                         (allowed-symbols none rare occasional frequent))
                               )"""
 
-template_headache = """(deftemplate headache 
-                           (slot frequency (type SYMBOL)
-                               (allowed-symbols none rare occasional frequent))
+template_headache = """(deftemplate headache
                            (slot intensity (type SYMBOL)
                                 (allowed-symbols none mild moderate severe))
                     )"""
@@ -176,12 +170,14 @@ rule_check_zika = """
         
         ; RETRO-ORBITAL PAIN - could add in allowing for no
         (symptoms (retro_orbital_pain yes))
-        (retro_orbital_pain (frequency rare))
-
+        (or 
+            (retro_orbital_pain (frequency rare))
+            (retro_orbital_pain (frequency none))
+        )
         
         ; HEADACHE
         (symptoms (headache yes))
-        (headache (frequency occasional) (intensity moderate))
+        (headache (intensity moderate))
         
         ; ITCH
         (symptoms (itch yes))
@@ -220,12 +216,17 @@ rule_check_dengue = """
         (symptoms (myalgia yes))
         (myalgia (frequency frequent))
         
-        ; ARTHRALGIA - could allow for no
-        (symptoms (arthralgia yes))
-        (arthralgia (intensity mild))
+        ; ARTHRALGIA
+        (or
+            (symptoms (arthralgia no))
+            (and
+                (symptoms (arthralgia yes))
+                (arthralgia (intensity mild))
+            )
+        )
         
         ; JOINT EDEMA - could make no
-        ;(symptoms (joint_edema yes))
+        (symptoms (joint_edema yes))
         
         ; RETRO-ORBITAL PAIN
         (symptoms (retro_orbital_pain yes))
@@ -273,7 +274,7 @@ rule_check_chikungunya = """
 
         ; ARTHRALGIA
         (symptoms (arthralgia yes))
-        (arthralgia (intensity severe))
+        ; (arthralgia (intensity severe))
 
         ; JOINT EDEMA
         ; (symptoms (joint_edema yes))
@@ -284,7 +285,7 @@ rule_check_chikungunya = """
 
         ; HEADACHE
         (symptoms (headache yes))
-        (headache (frequency occasional) (intensity moderate))
+        (headache (intensity moderate))
 
         ; ITCH
         (symptoms (itch yes))
@@ -292,7 +293,7 @@ rule_check_chikungunya = """
 
         ; LYMPH NODE HYPERTROPHY
         (symptoms (lymph_node_hypertrophy yes))
-        (lymph_node_hypertrophy (frequency occasional))
+        ; (lymph_node_hypertrophy (frequency occasional))
     )
   )
   ?f1 <- (chikungunya (criteria_met unknown))
