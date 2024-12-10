@@ -1,14 +1,62 @@
 import subprocess
 import pandas as pd
 import os
+from tabulate import tabulate
 
-data = pd.read_csv(f"{os.getcwd()}/data.csv")
-data = data.iloc[:,2:]
+
+symptoms_data = {
+    1: {"formal_name":"Pyrexia/Fever", "requires":["fever_temperature", "fever_duration"],
+        "labels":["degrees in F (float)", "duration in days (integer)"]},
+    2: {"formal_name":"Maculopapular rash", "requires":["rash_appearance"],
+        "labels":["day of appearance (integer)"]},
+    3: {"formal_name":"Myalgia", "requires":["myalgia_frequency"],
+        "labels":["frequency (0-5, 0=none and 5=frequent)"]},
+    4: {"formal_name":"Joint pain/arthralgia", "requires":["arthralgia_intensity"],
+        "labels":["intensity (0-5, 0=none and 5=severe)"]},
+    5: {"formal_name":"Joint Edema", "requires":["joint_edema_intensity"],
+        "labels":["intensity (0-5, 0=none and 5=severe)"]},
+    6: {"formal_name":"Retro-orbital pain", "requires":["retro_orbital_pain_frequency"],
+        "labels":["frequency (0-5, 0=none and 5=frequent)"]},
+    7: {"formal_name":"Headache", "requires":["headache_intensity"],
+        "labels":["intensity (0-5, 0=none and 5=severe)"]},
+    8: {"formal_name":"Itch", "requires":["itch_intensity"],
+        "labels":["intensity (0-5, 0=none and 5=severe)"]},
+    9: {"formal_name":"Lymph node hypertrophy", "requires":["lymph_node_hypertrophy_frequency"],
+        "labels":["frequency (0-5, 0=none and 5=frequent)"]}
+}
+
+# initialize patient data to normal and no symptoms
+data = {'fever_temperature':97, 'fever_duration':0, 'rash_appearance':0, 'myalgia_frequency':0,
+        'arthralgia_intensity':0, 'joint_edema_intensity':0, 'retro_orbital_pain_frequency':0,
+        'headache_intensity':0, 'itch_intensity':0, 'lymph_node_hypertrophy_frequency':0}
+
+# print the table of keys and symptoms
+output_table = [[id, data["formal_name"]] for id, data in symptoms_data.items()]
+print(tabulate(output_table,
+               headers=['Key', 'Symptom']))
+val = input("\nEnter the corresponding numerical key for each symptom the patient has (separated by spaces): ")
+vals = list(dict.fromkeys(val.split(" ")))  # split the list by the spaces
+
+print("\nPlease fill in the following additional information:")
+for v in vals:
+    other_data = symptoms_data[int(v)]["requires"]
+
+    for o in range(0, len(other_data)):
+        inp_string = f"    {symptoms_data[int(v)]['formal_name']} {symptoms_data[int(v)]['labels'][o]}: "
+        curr_template = symptoms_data[int(v)]["requires"][o]
+
+        user_input = input(inp_string)
+        if curr_template == "fever_temperature":
+            data[curr_template] = float(user_input)
+        else:
+            data[curr_template] = int(user_input)
+
+df = pd.DataFrame([data])
 
 all_commands = {}
 all_output = {}
 
-for _, row in data.iterrows():
+for _, row in df.iterrows():
     # start fuzzy clips
     process = subprocess.Popen(
         ["/Users/sophiekk/PycharmProjects/FuzzyCLIPS/source/fz_clips"],
@@ -69,7 +117,14 @@ for _, row in data.iterrows():
     command = f"""(load "{os.getcwd()}/fuzzyES.clp")\n""" + facts_string + """\n(reset)\n(run)\n(facts)\n(exit)"""
 
     stdout, stderr = process.communicate(command)
+    # print(stdout)
 
-    result_fact = next((line for line in stdout.splitlines() if "f-15" in line), None)
-    all_output[_] = stdout
-
+    result_fact = next((line for line in stdout.splitlines() if "f-11" in line), None)
+    if result_fact:
+        result_fact = result_fact.replace("f-11    (","")
+        result_fact = result_fact.strip()
+        split_res = result_fact.split(" ")
+        print(f"\nDisease: {split_res[0]}")
+        print(f"CF: {split_res[-1]}")
+    else:
+        print("Unknown")

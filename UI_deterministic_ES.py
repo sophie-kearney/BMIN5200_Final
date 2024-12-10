@@ -31,6 +31,10 @@ def invalid_user_input(val, min, max):
 # TEMPLATES
 ###
 
+
+# ; remove
+# arthralgia frequency, conjunctival_hyperemia, headache frequency, hemorrhagic_dyscrasia, neuro_impairment joint edema frequency
+
 template_symptoms = """(deftemplate symptoms
                            (slot temperature (type SYMBOL)
                                 (allowed-symbols unknown no yes))
@@ -44,17 +48,11 @@ template_symptoms = """(deftemplate symptoms
                                 (allowed-symbols unknown no yes))
                            (slot retro_orbital_pain (type SYMBOL)
                                 (allowed-symbols unknown no yes))
-                           (slot conjunctival_hyperemia (type SYMBOL)
-                                (allowed-symbols unknown no yes))
                            (slot headache (type SYMBOL)
                                 (allowed-symbols unknown no yes))
                            (slot itch (type SYMBOL)
                                 (allowed-symbols unknown no yes))
                            (slot lymph_node_hypertrophy (type SYMBOL)
-                                (allowed-symbols unknown no yes))
-                           (slot hemorrhagic_dyscrasia (type SYMBOL)
-                                (allowed-symbols unknown no yes))
-                           (slot neuro_impairment (type SYMBOL)
                                 (allowed-symbols unknown no yes))
                     )"""
 
@@ -73,15 +71,11 @@ template_myalgia = """(deftemplate myalgia
                    )"""
 
 template_arthralgia = """(deftemplate arthralgia
-                             (slot frequency (type SYMBOL)
-                                (allowed-symbols none rare occasional frequent))
                              (slot intensity (type SYMBOL)
                                 (allowed-symbols none mild moderate severe))
                       )"""
 
-template_joint_edema = """(deftemplate joint_edema 
-                             (slot frequency (type SYMBOL)
-                                (allowed-symbols none rare occasional frequent))
+template_joint_edema = """(deftemplate joint_edema
                              (slot intensity (type SYMBOL)
                                 (allowed-symbols none mild moderate severe))
                       )"""
@@ -107,16 +101,6 @@ template_lymph_node_hypertrophy = """(deftemplate lymph_node_hypertrophy
                                          (slot frequency (type SYMBOL)
                                              (allowed-symbols none rare occasional frequent))
                                   )"""
-
-template_hemorrhagic_dyscrasia = """(deftemplate hemorrhagic_dyscrasia
-                                         (slot frequency (type SYMBOL)
-                                             (allowed-symbols none rare occasional frequent))
-                                  )"""
-
-template_neuro_impairment = """(deftemplate neuro_impairment
-                                    (slot intensity (type SYMBOL)
-                                        (allowed-symbols none mild moderate severe))
-                            )"""
 
 template_dengue = """(deftemplate dengue
                         (slot criteria_met (type SYMBOL)
@@ -144,8 +128,6 @@ env.build(template_retro_orbital_pain)
 env.build(template_headache)
 env.build(template_itch)
 env.build(template_lymph_node_hypertrophy)
-env.build(template_hemorrhagic_dyscrasia)
-env.build(template_neuro_impairment)
 
 env.build(template_dengue)
 env.build(template_zika)
@@ -184,21 +166,18 @@ rule_check_zika = """
         
         ; ARTHRALGIA
         (symptoms (arthralgia yes))
-        (arthralgia (frequency occasional) (intensity ?arthralgia_intensity))
+        (arthralgia (intensity ?arthralgia_intensity))
         (or (test(eq ?arthralgia_intensity mild)) (test(eq ?arthralgia_intensity moderate)))
         
         ; JOINT EDEMA
         (symptoms (joint_edema yes))
-        (joint_edema (frequency ?edema_freq) (intensity ?edema_intensity))
-        (or (test(eq ?edema_freq rare)) (test(eq ?edema_freq occasional)))
+        (joint_edema (intensity ?edema_intensity))
         (or (test(eq ?edema_intensity mild)) (test(eq ?edema_intensity moderate)))
         
         ; RETRO-ORBITAL PAIN - could add in allowing for no
         (symptoms (retro_orbital_pain yes))
         (retro_orbital_pain (frequency rare))
-        
-        ; CONJUNCTIVAL HYPEREMIA
-        (symptoms (conjunctival_hyperemia yes))
+
         
         ; HEADACHE
         (symptoms (headache yes))
@@ -212,13 +191,6 @@ rule_check_zika = """
         ; LYMPH NODE HYPERTROPHY
         (symptoms (lymph_node_hypertrophy yes))
         (lymph_node_hypertrophy (frequency frequent))
-        
-        ; HEMORRHAGIC DYSCRASIA
-        (symptoms (hemorrhagic_dyscrasia no))
-        
-        ; NEUROLOGICAL IMPAIRMENT
-        (symptoms (neuro_impairment yes))
-        (neuro_impairment (intensity mild))
     )
   )
   ?f1 <- (zika (criteria_met unknown))
@@ -250,22 +222,18 @@ rule_check_dengue = """
         
         ; ARTHRALGIA - could allow for no
         (symptoms (arthralgia yes))
-        (arthralgia (frequency rare) (intensity mild))
+        (arthralgia (intensity mild))
         
         ; JOINT EDEMA - could make no
-        (symptoms (joint_edema yes))
-        (joint_edema (frequency rare))
+        ;(symptoms (joint_edema yes))
         
         ; RETRO-ORBITAL PAIN
         (symptoms (retro_orbital_pain yes))
         (retro_orbital_pain (frequency frequent))
         
-        ; CONJUNCTIVAL HYPEREMIA
-        (symptoms (conjunctival_hyperemia no))
-        
         ; HEADACHE
         (symptoms (headache yes))
-        (headache (frequency frequent) (intensity severe))
+        (headache (intensity severe))
         
         ; ITCH
         (symptoms (itch yes))
@@ -274,13 +242,6 @@ rule_check_dengue = """
         ; LYMPH NODE HYPERTROPHY
         (symptoms (lymph_node_hypertrophy yes))
         (lymph_node_hypertrophy (frequency rare))
-        
-        ; HEMORRHAGIC DYSCRASIA
-        (symptoms (hemorrhagic_dyscrasia yes))
-        (hemorrhagic_dyscrasia (frequency occasional))
-        
-        ; NEUROLOGICAL IMPAIRMENT
-        (symptoms (neuro_impairment no))
     )
   )
   ?f1 <- (dengue (criteria_met unknown))
@@ -312,18 +273,14 @@ rule_check_chikungunya = """
 
         ; ARTHRALGIA
         (symptoms (arthralgia yes))
-        (arthralgia (frequency frequent) (intensity severe))
+        (arthralgia (intensity severe))
 
         ; JOINT EDEMA
-        (symptoms (joint_edema yes))
-        (joint_edema (frequency frequent) (intensity severe))
+        ; (symptoms (joint_edema yes))
 
         ; RETRO-ORBITAL PAIN
         (symptoms (retro_orbital_pain yes))
         (retro_orbital_pain (frequency rare))
-
-        ; CONJUNCTIVAL HYPEREMIA
-        (symptoms (conjunctival_hyperemia yes))
 
         ; HEADACHE
         (symptoms (headache yes))
@@ -336,13 +293,6 @@ rule_check_chikungunya = """
         ; LYMPH NODE HYPERTROPHY
         (symptoms (lymph_node_hypertrophy yes))
         (lymph_node_hypertrophy (frequency occasional))
-
-        ; HEMORRHAGIC DYSCRASIA
-        (symptoms (hemorrhagic_dyscrasia yes))
-        (hemorrhagic_dyscrasia (frequency rare))
-
-        ; NEUROLOGICAL IMPAIRMENT
-        (symptoms (neuro_impairment no))
     )
   )
   ?f1 <- (chikungunya (criteria_met unknown))
@@ -391,12 +341,9 @@ symptoms_data = {
     4: {"formal_name":"Joint pain/arthralgia", "template":"arthralgia"},
     5: {"formal_name":"Joint Edema", "template":"joint_edema"},
     6: {"formal_name":"Retro-orbital pain", "template":"retro_orbital_pain"},
-    7: {"formal_name":"Conjunctival hyperemia", "template":"conjunctival_hyperemia"},
-    8: {"formal_name":"Headache", "template":"headache"},
-    9: {"formal_name":"Itch", "template":"itch"},
-    10: {"formal_name":"Lymph node hypertrophy", "template":"lymph_node_hypertrophy"},
-    11: {"formal_name":"Hemorrhagic dyscrasia", "template":"hemorrhagic_dyscrasia"},
-    12: {"formal_name":"Neurological impairment", "template":"neuro_impairment"}
+    7: {"formal_name":"Headache", "template":"headache"},
+    8: {"formal_name":"Itch", "template":"itch"},
+    9: {"formal_name":"Lymph node hypertrophy", "template":"lymph_node_hypertrophy"},
 }
 
 # print the table of keys and symptoms
@@ -453,11 +400,15 @@ for t in templates:
 
                 response[s.name] = possible_vals[int(v)]
             elif s.types[0] == "FLOAT":
-                inp_string = f"{title} {s.name} (float): "
+                inp_string = f"{title} degrees in F (float): "
                 v = input(inp_string)
                 response[s.name] = float(v)
             elif s.types[0] == "INTEGER":
-                inp_string = f"{title} {s.name} (integer): "
+                if t.name == "temperature":
+                    inp_string = f"{title} duration in days (integer): "
+                else:
+                    inp_string = f"{title} day of appearance (integer): "
+                # inp_string = f"{title} {s.name} (integer): "
                 v = input(inp_string)
                 response[s.name] = int(v)
 
