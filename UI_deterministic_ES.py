@@ -1,13 +1,15 @@
+"""
+Defines the deterministic expert system in pyclips and also manages the UI
+"""
 ###
 # CONFIG
 ###
-from tabnanny import check
-
 import clips, os
 from src.clips_util import print_facts, print_rules, print_templates, build_read_assert
 import logging
 from tabulate import tabulate
 
+# set up environment and make sure output is visible
 env = clips.Environment()
 logging.basicConfig(level=10, format='%(message)s')
 router = clips.LoggingRouter()
@@ -17,6 +19,7 @@ env.add_router(router)
 # FUNCTIONS
 ###
 
+# check if the user input is valid or not. if not, a warning is displayed
 def invalid_user_input(val, min, max):
     ret = False
     if not val.isdigit():
@@ -323,6 +326,7 @@ env.build(rule_unknown)
 # INITIALIZE SYSTEM
 ###
 
+# set diseases to unknown at initialization
 fact_initialize = """(deffacts initialize_facts "Set all possible diseases to unknown"
                             (dengue (criteria_met unknown))
                             (zika (criteria_met unknown))
@@ -335,6 +339,7 @@ env.reset()
 # ASK PATIENT WHICH SYMPTOMS ARE PRESENT
 ###
 
+# store information about each template like the name to connect the user input and the CLIPS code
 symptoms_data = {
     1: {"formal_name":"Pyrexia/Fever", "template":"temperature"},
     2: {"formal_name":"Maculopapular rash", "template":"rash"},
@@ -356,6 +361,7 @@ vals = list(set(val.split(" ")))  # split the list by the spaces
 
 yes_symptoms = []
 symptom_values = {}
+# iterate over each symptom the patient has
 for s in vals:
     if invalid_user_input(s,1, 12):
         continue
@@ -366,50 +372,64 @@ for s in vals:
     yes_symptoms.append(symptom_template["template"])
     symptom_values[symptom_template["template"]] = clips.Symbol('yes')
 
-# set the boolean yes or no values for the prescence of symptoms
+# set the boolean yes or no values for the presence of symptoms
 all_symptoms = [details["template"] for details in symptoms_data.values()]
 no_symptoms = list(set(all_symptoms).difference(set(yes_symptoms)))
+
+# set the symptoms the patient doesn't have to "no" in symptoms
 for s in no_symptoms:
     symptom_values[s] = clips.Symbol('no')
 symptoms = env.find_template('symptoms')
+
+# assert all the "yes" and "no" for each symptom in the symptom template
 symptoms.assert_fact(**symptom_values)
 
 template_names = [template.name for template in env.templates()]
 templates = env.templates()
 
+# match up the formal_name and the template name to connect the
+#   user displayed information to the CLIPS code
 name_key = {details["template"]: details["formal_name"] for details in symptoms_data.values()}
 
 print("\nPlease fill in the following additional information:")
 user_input = {}
+# iterate over each template
 for t in templates:
     if t.name in yes_symptoms:
         title = f"    {name_key[t.name]}"
         slots = t.slots
 
         response = {}
+        # iterate over each slot in the template
         for s in slots:
             if s.types[0] == "SYMBOL":
                 inp_string = f"{title} {s.name} ("
                 possible_vals = s.allowed_values
                 for i in range(0,len(possible_vals)):
                     inp_string += f"{i}={possible_vals[i]}, "
+
+                # remove the last uncessesary ", "
                 inp_string = inp_string[:-2] + "): "
                 v = input(inp_string)
 
                 if invalid_user_input(v, 0, len(possible_vals)):
                     continue
-
                 response[s.name] = possible_vals[int(v)]
+
+            # only the temperature degrees is a float
             elif s.types[0] == "FLOAT":
                 inp_string = f"{title} degrees in F (float): "
                 v = input(inp_string)
                 response[s.name] = float(v)
+
+            # both the rash appearance and temperature duration are in
+            #   days so we have to differentiate these
             elif s.types[0] == "INTEGER":
                 if t.name == "temperature":
                     inp_string = f"{title} duration in days (integer): "
                 else:
                     inp_string = f"{title} day of appearance (integer): "
-                # inp_string = f"{title} {s.name} (integer): "
+
                 v = input(inp_string)
                 response[s.name] = int(v)
 
@@ -423,7 +443,7 @@ for temp_name in user_input.keys():
     template.assert_fact(**user_input[temp_name])
 
 ###
-# TEST SYSTEM
+# RUN SYSTEM
 ###
 
 env.run()
